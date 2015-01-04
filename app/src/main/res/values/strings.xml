@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">NXGeoTagger</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="startService">Restart Service</string>
+    <string name="stopService">Stop Service &amp; Exit</string>
+
+</resources>
