@@ -12,7 +12,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/startService"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
         />
 
     <Button
@@ -20,12 +19,48 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/stopService"
-        android:layout_toRightOf="@id/startServiceButton"/>
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
 
-    <TextView
-        android:id="@+id/folderTextView"
+    <LinearLayout
+        android:layout_marginTop="30dp"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/stopServiceButton"/>
+        android:orientation="horizontal"
+        android:weightSum="1.0"
+        android:layout_below="@id/startServiceButton"
+        >
+        <LinearLayout
+            android:id="@+id/folderLeftLayout"
+            android:orientation="vertical"
+            android:layout_weight="0.7"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp">
+
+            <TextView
+                android:id="@+id/folderTextView"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/folderRightLayout"
+            android:orientation="vertical"
+            android:layout_weight="0.3"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp">
+
+            <Button
+                android:id="@+id/directoryButton"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/chooseDirectory"
+                />
+        </LinearLayout>
+    </LinearLayout>
+   
+
+   
 
 </RelativeLayout>

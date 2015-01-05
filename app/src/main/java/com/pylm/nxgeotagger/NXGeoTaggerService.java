@@ -20,6 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.FileObserver;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.io.File;
@@ -37,6 +38,7 @@ public class NXGeoTaggerService extends Service implements LocationListener {
     private static final float MIN_DISTANCE_CHANGE_FOR_UPDATES = 3;
     protected LocationManager locationManager;
     protected Location location;
+    private FileObserver fileObserver;
 
     private int notificationId = new Random().nextInt();
 
@@ -68,8 +70,9 @@ public class NXGeoTaggerService extends Service implements LocationListener {
                 .setContentIntent(pendingIntent).build();
         startForeground(1, notification);
 
-        final String folderPath = intent.getStringExtra(MainActivity.FOLDER_PATH_ID);
-        FileObserver fileObserver = new FileObserver(folderPath, FileObserver.CREATE | FileObserver.CLOSE_WRITE) {
+        final String folderPath = PreferenceManager.getDefaultSharedPreferences(
+                getApplicationContext()).getString(MainActivity.FOLDER_PATH_ID, "");
+        fileObserver = new FileObserver(folderPath, FileObserver.CREATE | FileObserver.CLOSE_WRITE) {
             Set<String> filesProcessed = new HashSet<>();
 
             @Override
@@ -196,6 +199,7 @@ public class NXGeoTaggerService extends Service implements LocationListener {
     @Override
     public void onDestroy() {
         Log.d(getClass().getName(), "NXGeoTagger Service stopped");
+        fileObserver.stopWatching();
         super.onDestroy();
     }
 

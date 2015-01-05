@@ -6,5 +6,6 @@
     <string name="action_settings">Settings</string>
     <string name="startService">Restart Service</string>
     <string name="stopService">Stop Service &amp; Exit</string>
+    <string name="chooseDirectory">Choose Directory</string>
 
 </resources>

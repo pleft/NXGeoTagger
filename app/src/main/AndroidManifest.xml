@@ -24,9 +24,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.pylm.nxgeotagger.SettingsActivity"/>
-
         <service
             android:name="com.pylm.nxgeotagger.NXGeoTaggerService"
             android:enabled="true"

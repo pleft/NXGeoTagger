@@ -1,10 +1,13 @@
 package com.pylm.nxgeotagger;
 
+import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Environment;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v4.app.Fragment;
+import android.preference.PreferenceManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,14 +17,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import net.rdrei.android.dirchooser.DirectoryChooserFragment;
+
 import static android.os.Environment.getExternalStoragePublicDirectory;
 
 
-public class MainActivity extends ActionBarActivity {
-
-    static Button startServiceButton;
-    static Button stopServiceButton;
-    static TextView folderTextView;
+public class MainActivity extends Activity implements DirectoryChooserFragment.OnFragmentInteractionListener {
 
     public static final String FOLDER_PATH_ID = "FOLDER_PATH_ID";
 
@@ -29,10 +30,10 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
-                    .commit();
+            getFragmentManager().beginTransaction()
+                    .add(R.id.container, new PlaceholderFragment(), "PlaceholderFragment").commit();
         }
     }
 
@@ -50,13 +51,6 @@ public class MainActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            startActivity(new Intent(this, SettingsActivity.class));
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -65,6 +59,14 @@ public class MainActivity extends ActionBarActivity {
      */
     public static class PlaceholderFragment extends Fragment {
 
+        private Button startServiceButton;
+        private Button stopServiceButton;
+        private Button directoryButton;
+        private TextView folderTextView;
+        private DirectoryChooserFragment mDialog;
+        private Intent serviceIntent;
+        private String folderPath;
+        
         public PlaceholderFragment() {
         }
 
@@ -73,18 +75,24 @@ public class MainActivity extends ActionBarActivity {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
+            folderPath = getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getPath() + "/Camera/Samsung Smart Camera Application/AutoShare";
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            if(preferences.contains(FOLDER_PATH_ID)) {
+                folderPath = preferences.getString(FOLDER_PATH_ID, folderPath);
+            } else {
+                preferences.edit().putString(FOLDER_PATH_ID, folderPath).commit();
+            }
+            serviceIntent = new Intent(getActivity(), NXGeoTaggerService.class);
+            getActivity().startService(serviceIntent);
 
-            String folderPath = getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getPath() + "/Camera/Samsung Smart Camera Application/AutoShare";
-            final Intent intent = new Intent(getActivity(), NXGeoTaggerService.class);
-            intent.putExtra(FOLDER_PATH_ID, folderPath);
-            getActivity().startService(intent);
+            mDialog = DirectoryChooserFragment.newInstance("AutoShare", folderPath);
 
             startServiceButton  = (Button) rootView.findViewById(R.id.startServiceButton);
             startServiceButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(getActivity(), "Starting Service...", Toast.LENGTH_LONG).show();
-                    getActivity().startService(intent);
+                    getActivity().startService(serviceIntent);
                 }
             });
             stopServiceButton  = (Button) rootView.findViewById(R.id.stopServiceButton);
@@ -92,8 +100,15 @@ public class MainActivity extends ActionBarActivity {
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(getActivity(), "Stopping Service...", Toast.LENGTH_SHORT).show();
-                    getActivity().stopService(intent);
+                    getActivity().stopService(serviceIntent);
                     getActivity().finish();
+                }
+            });
+            directoryButton  = (Button) rootView.findViewById(R.id.directoryButton);
+            directoryButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mDialog.show(getFragmentManager(), null);
                 }
             });
 
@@ -101,5 +116,34 @@ public class MainActivity extends ActionBarActivity {
             folderTextView.setText(folderPath);
             return rootView;
         }
+        
+        public void onSelectDirectory(@NonNull String path) {
+            folderPath = path;
+            folderTextView.setText(folderPath);
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            preferences.edit().putString(FOLDER_PATH_ID, path).commit();
+            mDialog.dismiss();
+        }
+
+        public void onCancelChooser() {
+            mDialog.dismiss();
+        }
+    }
+
+    @Override
+    public void onSelectDirectory(@NonNull String path) {
+        PlaceholderFragment placeholderFragment = (PlaceholderFragment) getFragmentManager().findFragmentById(R.id.container);
+        placeholderFragment.onSelectDirectory(path);
+        Toast.makeText(this, "Restarting Service...", Toast.LENGTH_SHORT).show();
+        Intent serviceIntent = new Intent(this, NXGeoTaggerService.class);
+        if(stopService(serviceIntent)) {
+            startService(serviceIntent);
+        }
+    }
+
+    @Override
+    public void onCancelChooser() {
+        PlaceholderFragment placeholderFragment = (PlaceholderFragment) getFragmentManager().findFragmentById(R.id.container);
+        placeholderFragment.onCancelChooser();
     }
 }
