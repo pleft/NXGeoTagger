@@ -1,0 +1,69 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="40dp"
+    android:paddingRight="210dp"
+    android:paddingTop="60dp"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity$PlaceholderFragment"
+    android:id="@+id/parentLayout"
+    android:background="@drawable/background_land">
+
+    <Button
+        android:id="@+id/startServiceButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/startService"
+        android:layout_alignTop="@+id/stopServiceButton"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:id="@+id/stopServiceButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/stopService"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
+
+    <LinearLayout
+        android:layout_marginTop="30dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1.0"
+        android:layout_below="@id/startServiceButton"
+        >
+        <LinearLayout
+            android:id="@+id/folderLeftLayout"
+            android:orientation="vertical"
+            android:layout_weight="0.7"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp">
+
+            <TextView
+                android:id="@+id/folderTextView"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/folderRightLayout"
+            android:orientation="vertical"
+            android:layout_weight="0.3"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp">
+
+            <Button
+                android:id="@+id/directoryButton"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/chooseAutoShareFolder"
+                />
+        </LinearLayout>
+    </LinearLayout>
+   
+
+   
+
+</RelativeLayout>

@@ -166,7 +166,7 @@ public class NXGeoTaggerService extends Service implements LocationListener {
 
                             Notification.Builder notificationBuilder = new Notification.Builder(getApplicationContext())
                                     .setContentTitle(NX_GEO_TAGGER)
-                                    .setContentText(path)
+                                    .setContentText("added location metadata to: " + path)
                                     .setLargeIcon(bitmap)
                                     .setSmallIcon(R.drawable.ic_stat_image_photo)
 //                                    .setStyle(new Notification.BigPictureStyle().bigPicture(bitmap))
